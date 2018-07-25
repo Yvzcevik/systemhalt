@@ -1,1 +1,35 @@
 #!/usr/bin/bash
+
+echo -e "ATTENTION! This script collects login informations from:\n\n/var/log/wtmp\n/var/run/btmp\n/var/log/utmp\n\nPlease check if these files exist and check your permissions before you go any further.\n\n"
+dayNum=$(date +"%d")
+dayStr=$(date +"%a")
+month=$(date +"%b")
+year=$(date +"%Y")
+
+echo -e "Current Date : $dayStr $month &dayNum &year"
+echo -e "Choose a period for login informations:\n 1 - Daily\n 2 - Weekly\n 3 - Monthly"
+
+read period
+echo "Your Choice: $period"
+
+#Using case construct to eliminate inputs other than 1,2 or 3
+case "$period" in
+
+	1)
+    utmpdump /var/log/wtmp | cut -d "[" -f 7 | cut -d "]" -f 1
+  ;;
+  
+  2)
+  
+  ;;
+  
+  3)
+  
+  ;;
+  
+  *)
+    esco "Please enter a number from list"
+esac
+
+HOSTNAME=$(uname -a | cut -d " " -f 2)
+echo "$HOSTNAME Login List"
