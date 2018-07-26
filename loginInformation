@@ -14,10 +14,9 @@ chmod 755 $SCRIPT_DIR/tmp.txt
 HOSTNAME=$(uname -a | cut -d " " -f 2)
 echo "$HOSTNAME Login List" >> tmp.txt
 echo "===============================================" >> tmp.txt
-
+LOGIN_COUNTER=1
 read period
 echo "Your Choice: $period"
-
 #Using case construct to eliminate inputs other than 1,2 or 3
 case "$period" in
 
@@ -37,4 +36,5 @@ case "$period" in
     esco "Please enter a number from list"
 esac
 
-
+vi tmp.txt
+rm $SCRIPT_DIR/tmp.txt
