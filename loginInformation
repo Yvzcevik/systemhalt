@@ -1,5 +1,7 @@
 #!/bin/bash
 #Created by Halil Yavuz Çevik (25/07/2018)
+# 64 bit Ubuntu output example
+# [7] [00613] [:0  ] [user      ] [tty7        ] [:0                  ] [0.0.0.0        ] [2018-07-26T17:34:49,586825+0000]
 
 echo -e "ATTENTION! This script collects login informations from:\n\n/var/log/wtmp\n/var/run/btmp\n/var/log/utmp\n\nPlease check if these files exist and check your permissions before you go any further.\n\n"
 dayNum=$(date +"%d")
@@ -35,7 +37,7 @@ case "$period" in
 					iflocal="$(echo -e "${arrIN[5]}" | sed -e 's/[[:space:]]*$//' -e 's/^[[:space:]]*//' -e 's/^\[//')"
 					iftty="$(echo -e "${arrIN[4]}" | sed -e 's/[[:space:]]*$//' -e 's/^[[:space:]]*//' -e 's/^\[//')"
 					#Excluding outputs except physical GUI logins
-					if [ "$iflocal" = ":0" ] && [ "$iftty" = "tty1" ]
+					if [ "$iflocal" = ":0" ] && [[ $iftty =~ [tty.] ]]
 						then 
 						echo "GUI Login $LOGIN_COUNTER" >> tmp.txt
 						echo "${arrIN[3]}] ${arrIN[7]}]" >> tmp.txt
