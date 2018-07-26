@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 echo -e "ATTENTION! This script collects login informations from:\n\n/var/log/wtmp\n/var/run/btmp\n/var/log/utmp\n\nPlease check if these files exist and check your permissions before you go any further.\n\n"
 dayNum=$(date +"%d")
@@ -8,6 +8,12 @@ year=$(date +"%Y")
 
 echo -e "Current Date : $dayStr $month &dayNum &year"
 echo -e "Choose a period for login informations:\n 1 - Daily\n 2 - Weekly\n 3 - Monthly"
+SCRIPT_DIR=$(pwd)
+touch $SCRIPT_DIR/tmp.txt
+chmod 755 $SCRIPT_DIR/tmp.txt
+HOSTNAME=$(uname -a | cut -d " " -f 2)
+echo "$HOSTNAME Login List" >> tmp.txt
+echo "===============================================" >> tmp.txt
 
 read period
 echo "Your Choice: $period"
@@ -31,5 +37,4 @@ case "$period" in
     esco "Please enter a number from list"
 esac
 
-HOSTNAME=$(uname -a | cut -d " " -f 2)
-echo "$HOSTNAME Login List"
+
