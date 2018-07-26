@@ -21,7 +21,11 @@ echo "Your Choice: $period"
 case "$period" in
 
 	1)
-    utmpdump /var/log/wtmp | cut -d "[" -f 7 | cut -d "]" -f 1
+  		stdbuf -oL utmpdump /var/log/wtmp | grep "$year" | grep "$dayStr $month $dayNum" |
+			while IFS= read -r line
+			do
+			
+			done
   ;;
   
   2)
