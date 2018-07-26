@@ -36,7 +36,11 @@ case "$period" in
 					iftty="$(echo -e "${arrIN[4]}" | sed -e 's/[[:space:]]*$//' -e 's/^[[:space:]]*//' -e 's/^\[//')"
 					#Excluding outputs except physical GUI logins
 					if [ "$iflocal" = ":0" ] && [ "$iftty" = "tty1" ]
-					
+						then 
+						echo "GUI Login $LOGIN_COUNTER" >> tmp.txt
+						echo "${arrIN[3]}] ${arrIN[7]}]" >> tmp.txt
+						echo "===============================================" >> tmp.txt
+						LOGIN_COUNTER=$((LOGIN_COUNTER + 1))
 					fi
 				fi
 			done
