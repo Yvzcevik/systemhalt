@@ -1,5 +1,5 @@
-#Created by Halil Yavuz Çevik (25/07/2018)
 #!/bin/bash
+#Created by Halil Yavuz Çevik (25/07/2018)
 
 echo -e "ATTENTION! This script collects login informations from:\n\n/var/log/wtmp\n/var/run/btmp\n/var/log/utmp\n\nPlease check if these files exist and check your permissions before you go any further.\n\n"
 dayNum=$(date +"%d")
@@ -29,6 +29,16 @@ case "$period" in
 				arrIN=(${IN//[/[})
 				#Lines have whitespaces so we need to use IFS here
 				IFS=']'; arrIN=($IN); unset IFS;
+				if [ "${arrIN[0]}" = "[7" ];
+					then
+					#Excluding whitespaces and '[' character
+					iflocal="$(echo -e "${arrIN[5]}" | sed -e 's/[[:space:]]*$//' -e 's/^[[:space:]]*//' -e 's/^\[//')"
+					iftty="$(echo -e "${arrIN[4]}" | sed -e 's/[[:space:]]*$//' -e 's/^[[:space:]]*//' -e 's/^\[//')"
+					#Excluding outputs except physical GUI logins
+					if [ "$iflocal" = ":0" ] && [ "$iftty" = "tty1" ]
+					
+					fi
+				fi
 			done
   ;;
   
