@@ -1,3 +1,4 @@
+#Created by Halil Yavuz Çevik (25/07/2018)
 #!/bin/bash
 
 echo -e "ATTENTION! This script collects login informations from:\n\n/var/log/wtmp\n/var/run/btmp\n/var/log/utmp\n\nPlease check if these files exist and check your permissions before you go any further.\n\n"
@@ -24,7 +25,10 @@ case "$period" in
   		stdbuf -oL utmpdump /var/log/wtmp | grep "$year" | grep "$dayStr $month $dayNum" |
 			while IFS= read -r line
 			do
-			
+				IN="$line"
+				arrIN=(${IN//[/[})
+				#Lines have whitespaces so we need to use IFS here
+				IFS=']'; arrIN=($IN); unset IFS;
 			done
   ;;
   
