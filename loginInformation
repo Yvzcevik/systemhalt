@@ -3,7 +3,7 @@
 # 64 bit Ubuntu output example
 # [7] [00613] [:0  ] [user      ] [tty7        ] [:0                  ] [0.0.0.0        ] [2018-07-26T17:34:49,586825+0000]
 
-echo -e "ATTENTION! This script collects login informations from:\n\n/var/log/wtmp\n/var/run/btmp\n/var/log/utmp\n\nPlease check if these files exist and check your permissions before you go any further.\n\n"
+echo -e "ATTENTION! This script is written for CentOS 6 platforms. Script collects login informations from:\n\n/var/log/wtmp\n/var/run/btmp\n/var/log/utmp\n\nPlease check if these files exist and check your permissions before you go any further.\n\n"
 dayNum=$(date +"%d")
 dayStr=$(date +"%a")
 month=$(date +"%b")
@@ -31,6 +31,7 @@ case "$period" in
 				arrIN=(${IN//[/[})
 				#Lines have whitespaces so we need to use IFS here
 				IFS=']'; arrIN=($IN); unset IFS;
+				#Collecting output of ut_type (Normal Processes)
 				if [ "${arrIN[0]}" = "[7" ];
 					then
 					#Excluding whitespaces and '[' character
@@ -39,13 +40,39 @@ case "$period" in
 					#Excluding outputs except physical GUI logins
 					if [ "$iflocal" = ":0" ] && [[ $iftty =~ [tty.] ]]
 						then 
-						echo "GUI Login $LOGIN_COUNTER" >> tmp.txt
-						echo "${arrIN[3]}] ${arrIN[7]}]" >> tmp.txt
-						echo "===============================================" >> tmp.txt
-						LOGIN_COUNTER=$((LOGIN_COUNTER + 1))
+						#Collecting data from /var/run/utmp for checking if anyone is currently active
+						stdbuf -oL utmpdump /var/run/utmp | grep "$year" | grep "$dayStr $month $dayNum" |
+						while IFS= read -r line
+						do
+							IN="$line"
+							arrINCLI=(${IN//[/[})
+							#Lines have whitespaces so we need to use IFS here
+							IFS=']'; arrINCLI=($IN); unset IFS;
+							if [ "${arrINCLI[0]}" = "[7" ];
+								then
+								#Excluding whitespaces and '[' character									iflocal="$(echo -e "${arrINCLI[5]}" | sed -e 's/[[:space:]]*$//' -e 's/^[[:space:]]*//' -e 's/^\[//')"
+								iftty="$(echo -e "${arrINCLI[4]}" | sed -e 's/[[:space:]]*$//' -e 's/^[[:space:]]*//' -e 's/^\[//')"
+								#Excluding outputs except physical GUI logins
+								if [ "$iflocal" = ":0" ] && [[ $iftty =~ [tty.] ]]
+									then 
+									if [ ${arrIN[3]} = ${arrINCLI[3]} ]
+										then
+										echo "GUI Login $LOGIN_COUNTER (Currently Logged In)" >> tmp.txt
+										echo "${arrIN[3]}] ${arrIN[7]}]" >> tmp.txt
+										echo "===============================================" >> tmp.txt
+										LOGIN_COUNTER=$((LOGIN_COUNTER + 1))
+									else											echo "GUI Login $LOGIN_COUNTER" >> tmp.txt
+										echo "${arrIN[3]}] ${arrIN[7]}]" >> tmp.txt
+										echo "===============================================" >> tmp.txt
+										LOGIN_COUNTER=$((LOGIN_COUNTER + 1))
+									fi
+								fi
+							fi
+						done
 					fi
 				fi
 			done
+					
   ;;
   
   2)
