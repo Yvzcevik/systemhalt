@@ -17,6 +17,141 @@ echo "Your Choice: $language"
 #Language Options
 case "$language" in
 	1)
+		echo -e "Gösterilecek oturum açma bilgileri için zaman aralığı belirleyiniz:\n 1 - Günlük\n 2 - Aylık"
+		SCRIPT_DIR=$(pwd)
+		touch $SCRIPT_DIR/tmp.txt
+		chmod 755 $SCRIPT_DIR/tmp.txt
+		HOSTNAME=$(uname -a | cut -d " " -f 2)
+		LOGIN_COUNTER=1
+		read period
+		echo
+		echo "Seçiminiz: $period"
+		echo
+		echo "BİLGİLER TOPLANIYOR. LÜTFEN BEKLEYİNİZ"
+		echo
+		#Sadece listedeki seçeneklerin seçilebilmesi için case yapısı kullanılacaktır.
+		case "$period" in
+	
+			1)
+				echo "$HOSTNAME Makinesine Şu An Grafik Arayüz Üzerinden Bağlı Kullanıcılar " >> tmp.txt
+				echo "===============================================" >> tmp.txt
+				#Grafik arayüz ekranı üzernden şu an bağlı biri var mı kontrolü için /var/run/utmp dizininden veri toplanıyor.
+				stdbuf -oL utmpdump /var/run/utmp | grep "$year" | grep "$dayStr $month $dayNum" |
+				while IFS= read -r line
+				do
+					IN="$line"
+					arrINCLI=(${IN//[/[})
+					#Boşluk olan satırları düzenleme amacıyla IFS kullanılıyor.
+					IFS=']'; arrINCLI=($IN); unset IFS;
+					if [ "${arrINCLI[0]}" = "[7" ];
+						then
+						#Boşluklar ve '[' karakterleri çıkarılacaktır.
+						iflocal="$(echo -e "${arrINCLI[5]}" | sed -e 's/[[:space:]]*$//' -e 's/^[[:space:]]*//' -e 's/^\[//')"
+						iftty="$(echo -e "${arrINCLI[4]}" | sed -e 's/[[:space:]]*$//' -e 's/^[[:space:]]*//' -e 's/^\[//')"
+						#Grafik arayüz üzerinden bağlantılar harici çıktılar göz ardı ediliyor.
+							if [ "$iflocal" = ":0" ] && [[ $iftty =~ [tty.] ]]
+								then 
+								echo "Grafik Arayüz Aktif" >> tmp.txt
+								echo "${arrINCLI[3]}] ${arrINCLI[7]}]" >> tmp.txt
+								echo "-----------------------------------------------" >> tmp.txt
+							fi
+					fi
+				done
+			
+				echo >> tmp.txt
+				echo >> tmp.txt
+			
+				echo "$HOSTNAME Makinesine Grafik Arayüz Üzerinden Bağlı Kullanıcılar " >> tmp.txt
+				echo "===============================================" >> tmp.txt
+				stdbuf -oL utmpdump /var/log/wtmp | grep "$year" | grep "$dayStr $month $dayNum" |
+					while IFS= read -r line
+					do
+						IN="$line"
+						arrIN=(${IN//[/[})
+						#Boşluk olan satırları düzenleme amacıyla IFS kullanılıyor.
+						IFS=']'; arrIN=($IN); unset IFS;
+						#ut_type (Normal Süreç) çıktıları toplanıyor
+						if [ "${arrIN[0]}" = "[7" ];
+							then
+							#Boşluklar ve '[' karakterleri çıkarılacaktır.
+							iflocal="$(echo -e "${arrIN[5]}" | sed -e 's/[[:space:]]*$//' -e 's/^[[:space:]]*//' -e 's/^\[//')"
+							iftty="$(echo -e "${arrIN[4]}" | sed -e 's/[[:space:]]*$//' -e 's/^[[:space:]]*//' -e 's/^\[//')"
+							#Grafik arayüz üzerinden bağlantılar harici çıktılar göz ardı ediliyor.
+							if [ "$iflocal" = ":0" ] && [[ $iftty =~ [tty.] ]]
+								then 
+								echo "Grafik Arayüz Oturum $LOGIN_COUNTER" >> tmp.txt
+								echo "${arrIN[3]}] ${arrIN[7]}]" >> tmp.txt
+								echo "-----------------------------------------------" >> tmp.txt
+								LOGIN_COUNTER=$(($LOGIN_COUNTER +1))
+							fi
+						fi
+					done
+							
+	 	 	;;
+  			2)
+				echo "$HOSTNAME Makinesine Şu An Grafik Arayüz Üzerinden Bağlı Kullanıcılar " >> tmp.txt
+				echo "===============================================" >> tmp.txt
+				#Grafik arayüz ekranı üzernden şu an bağlı biri var mı kontrolü için /var/run/utmp dizininden veri toplanıyor.
+				stdbuf -oL utmpdump /var/run/utmp | grep "$year" | grep "$month" |
+				while IFS= read -r line
+				do
+					IN="$line"
+					arrINCLI=(${IN//[/[})
+					#Boşluk olan satırları düzenleme amacıyla IFS kullanılıyor.
+					IFS=']'; arrINCLI=($IN); unset IFS;
+					if [ "${arrINCLI[0]}" = "[7" ];
+						then
+						#Boşluklar ve '[' karakterleri çıkarılacaktır.
+						iflocal="$(echo -e "${arrINCLI[5]}" | sed -e 's/[[:space:]]*$//' -e 's/^[[:space:]]*//' -e 's/^\[//')"
+						iftty="$(echo -e "${arrINCLI[4]}" | sed -e 's/[[:space:]]*$//' -e 's/^[[:space:]]*//' -e 's/^\[//')"
+						#Grafik arayüz üzerinden bağlantılar harici çıktılar göz ardı ediliyor.
+							if [ "$iflocal" = ":0" ] && [[ $iftty =~ [tty.] ]]
+								then 
+								echo "Grafik Arayüz Aktif" >> tmp.txt
+								echo "${arrINCLI[3]}] ${arrINCLI[7]}]" >> tmp.txt
+								echo "-----------------------------------------------" >> tmp.txt
+							fi
+					fi
+				done
+			
+				echo >> tmp.txt
+				echo >> tmp.txt
+			
+				echo "$HOSTNAME Makinesine Grafik Arayüz Üzerinden Bağlı Kullanıcılar " >> tmp.txt
+				echo "===============================================" >> tmp.txt
+				stdbuf -oL utmpdump /var/log/wtmp | grep "$year" | grep "$month" |
+					while IFS= read -r line
+					do
+						IN="$line"
+						arrIN=(${IN//[/[})
+						#Boşluk olan satırları düzenleme amacıyla IFS kullanılıyor.
+						IFS=']'; arrIN=($IN); unset IFS;
+						#ut_type (Normal Süreç) çıktıları toplanıyor
+						if [ "${arrIN[0]}" = "[7" ];
+							then
+							#Boşluklar ve '[' karakterleri çıkarılacaktır.
+							iflocal="$(echo -e "${arrIN[5]}" | sed -e 's/[[:space:]]*$//' -e 's/^[[:space:]]*//' -e 's/^\[//')"
+							iftty="$(echo -e "${arrIN[4]}" | sed -e 's/[[:space:]]*$//' -e 's/^[[:space:]]*//' -e 's/^\[//')"
+							#Grafik arayüz üzerinden bağlantılar harici çıktılar göz ardı ediliyor.
+							if [ "$iflocal" = ":0" ] && [[ $iftty =~ [tty.] ]]
+								then 
+								echo "Grafik Arayüz Oturum $LOGIN_COUNTER" >> tmp.txt
+								echo "${arrIN[3]}] ${arrIN[7]}]" >> tmp.txt
+								echo "-----------------------------------------------" >> tmp.txt
+								LOGIN_COUNTER=$(($LOGIN_COUNTER +1))
+							fi
+						fi
+					done
+							
+	 	 	;;
+  
+			3)
+  
+			;;
+  
+  			*)
+  			  esco "Lütfen Listeden Bir Sayı Seçiniz"
+			esac
 	;;
 
 	2)
