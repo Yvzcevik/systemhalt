@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #Created by Halil Yavuz Çevik (25/07/2018)
 # 64 bit Ubuntu output example
 # [7] [00613] [:0  ] [user      ] [tty7        ] [:0                  ] [0.0.0.0        ] [2018-07-26T17:34:49,586825+0000]
