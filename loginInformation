@@ -10,7 +10,7 @@ month=$(date +"%b")
 year=$(date +"%Y")
 
 echo -e "Current Date : $dayStr $month &dayNum &year"
-echo -e "Choose Language:\n 1 - Turkish\n 2 - English\n 3 - French"
+echo -e "Choose Language:\n 1 - Turkish\n 2 - English"
 read language
 echo
 echo "Your Choice: $language"
@@ -290,8 +290,6 @@ case "$language" in
   			*)
   			  esco "Please enter a number from list"
 			esac
-	;;
-	3)
 	;;
 	*)
 		esco "Please enter a number from list"
